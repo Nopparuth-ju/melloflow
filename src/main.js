@@ -12,10 +12,13 @@ window.appState = {
 };
 
 // Simple router
+const navItems = document.querySelectorAll('.nav-item');
+
 window.navigate = (viewId) => {
+  if (viewId === 'notifications') return; // Feature removed
+
   // Map index.html bottom nav IDs to actual views
   if (viewId === 'explore') viewId = 'level1';
-  if (viewId === 'notifications') viewId = 'history';
   if (viewId === 'profile') viewId = 'settings';
 
   document.querySelectorAll('.page-section').forEach(el => {
@@ -28,27 +31,28 @@ window.navigate = (viewId) => {
     viewEl.classList.add('flex');
   }
 
-  // Update nav UI
-  if (['home', 'explore', 'notifications', 'profile', 'level1', 'history', 'settings'].includes(viewId)) {
+  // Update nav UI (only home, explore, profile tabs remain in index.html)
+  if (['home', 'explore', 'profile', 'level1', 'settings'].includes(viewId)) {
     document.querySelectorAll('.nav-item').forEach(el => {
-      el.classList.remove('text-[#4A4A4A]');
+      el.classList.remove('text-[#4A4A4A]', 'active');
       el.classList.add('text-[#a0a0b0]');
     });
     // Add active to correct icon
-    const icons = { 'home': 0, 'level1': 1, 'history': 2, 'settings': 3 };
-    const activeNav = document.querySelectorAll('.nav-item')[icons[viewId] !== undefined ? icons[viewId] : -1];
+    let activeIndex = -1;
+    if (viewId === 'home') activeIndex = 0;
+    if (viewId === 'level1' || viewId === 'explore') activeIndex = 1;
+    if (viewId === 'settings' || viewId === 'profile') activeIndex = 2;
+    
+    const activeNav = document.querySelectorAll('.nav-item')[activeIndex];
     if (activeNav) {
       activeNav.classList.remove('text-[#a0a0b0]');
-      activeNav.classList.add('text-[#4A4A4A]');
+      activeNav.classList.add('text-[#4A4A4A]', 'active');
     }
   }
 
-  // Hook for history view
-  if (viewId === 'history') {
-    renderHistory();
-  }
+  // Hook for settings view
   if (viewId === 'settings') {
-    document.getElementById('api-key-input').value = localStorage.getItem('meloflow_api_key') || '';
+    // API key logic removed, settings is now profile
   }
 };
 
@@ -230,12 +234,7 @@ appDiv.innerHTML = `
     </div>
     
     <div class="bg-white rounded-[32px] p-6 shadow-[0_8px_24px_rgba(0,0,0,0.05)] border-2 border-white/50 mb-4 text-center relative">
-      <h4 class="text-sm font-semibold text-[#666677] mb-4 flex items-center justify-center gap-2">
-        Current Energy Frequency
-        <button onclick="openFrequencyMap()" class="w-5 h-5 rounded-full bg-[#FDFBF7] flex items-center justify-center text-[#a0a0b0] hover:text-[#4A4A4A] transition-colors border border-gray-100 shadow-sm">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        </button>
-      </h4>
+      <h4 class="text-sm font-semibold text-[#666677] mb-4">Current Energy Frequency</h4>
       
       <div class="flex justify-center mb-3">
         <svg id="energy-avatar" width="120" height="120" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="transition-all duration-700">
@@ -265,6 +264,11 @@ appDiv.innerHTML = `
         ⚡ 200 Hz
       </div>
       <p id="energy-paradigm" class="text-xs font-semibold mt-2 text-[#a0a0b0] transition-colors duration-700">Courage (Reason Paradigm)</p>
+
+      <button onclick="openFrequencyMap()" class="mt-5 px-5 py-2.5 bg-gradient-to-r from-[#FDFBF7] to-[#E5D4FF]/30 border border-[#E5D4FF]/80 rounded-full text-[#4A4A4A] font-semibold text-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 mx-auto active:scale-95">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        ดูแผนผังระดับพลังงาน
+      </button>
     </div>
 
     <div class="bg-white rounded-[32px] p-6 shadow-[0_15px_35px_rgba(0,0,0,0.05)] border-2 border-white/50">
@@ -285,33 +289,40 @@ appDiv.innerHTML = `
     </div>
   </div>
 
-  <!-- Settings View -->
-  <div id="view-settings" class="page-section hidden flex-col animate-[fadeUp_0.4s_ease-out]">
-    <div class="text-center mt-6 mb-8">
-      <h1 class="text-2xl font-semibold text-[#333333] mb-2">ตั้งค่า ⚙️</h1>
-    </div>
-    <div class="bg-white rounded-[32px] p-6 shadow-[0_8px_24px_rgba(0,0,0,0.05)] border-2 border-white/50 mb-4">
-      <h4 class="text-base font-semibold text-[#4A4A4A] mb-3">Gemini API Key</h4>
-      <p class="text-xs text-[#666677] mb-3">ใส่ API Key จาก Google AI Studio เพื่อใช้งาน AI ขั้นสูง (gemini-1.5-pro)</p>
-      <input type="password" id="api-key-input" class="w-full bg-[#F8F9FA] border border-[#E0E0E0] rounded-xl p-3 text-[#4A4A4A] font-sans text-sm focus:outline-none focus:border-[#E5D4FF]" placeholder="AIzaSy...">
-      <button class="w-full mt-3 py-3 rounded-xl bg-[#E5D4FF] text-[#4A4A4A] font-semibold text-sm transition-all hover:bg-[#d6bdf8]" onclick="saveApiKey()">บันทึก API Key</button>
-    </div>
-
-    <div class="bg-white rounded-[32px] p-6 shadow-[0_8px_24px_rgba(0,0,0,0.05)] border-2 border-white/50">
-      <div class="flex justify-between items-center mb-6">
-        <div>
-          <h4 class="text-base font-semibold text-[#4A4A4A] mb-1">การแจ้งเตือน</h4>
-          <p class="text-xs text-[#666677]">เตือนให้แวะพักใจ</p>
-        </div>
-        <button id="btn-noti" class="w-auto py-2 px-4 rounded-full bg-[#4A4A4A] text-white text-sm font-semibold shadow-[0_8px_20px_rgba(74,74,74,0.2)] transition-all hover:-translate-y-1 active:scale-95" onclick="enableNotifications()">เปิด</button>
+  <!-- Profile View (formerly settings) -->
+  <div id="view-settings" class="page-section hidden flex-col animate-[fadeUp_0.4s_ease-out] pb-10">
+    <div class="flex items-center gap-4 mb-8 px-2 mt-4">
+      <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-[#E5D4FF] to-[#C9F2E9] flex items-center justify-center shadow-inner overflow-hidden border-4 border-white">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
       </div>
-      <hr class="border-[#F8F9FA] my-6">
-      <div class="flex justify-between items-center">
-        <div>
-          <h4 class="text-base font-semibold text-[#4A4A4A] mb-1">ลบข้อมูล</h4>
-          <p class="text-xs text-[#666677]">ลบประวัติการแสกนทั้งหมด</p>
-        </div>
-        <button class="py-2 px-4 rounded-full bg-red-50 text-red-500 font-semibold text-sm transition-all hover:bg-red-100" onclick="clearHistory()">ลบ</button>
+      <div>
+        <h2 class="text-2xl font-bold text-[#333333]">ผู้ใช้ทั่วไป</h2>
+        <p class="text-sm text-[#888899]">ใช้งาน Melloflow</p>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-[32px] p-6 shadow-sm border border-white/50 space-y-5">
+      <h3 class="font-semibold text-[#4A4A4A] mb-2 flex items-center gap-2">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a0a0b0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        ข้อมูลแอปพลิเคชัน
+      </h3>
+      
+      <div class="flex justify-between items-center py-2 border-b border-gray-50">
+        <span class="text-sm text-[#666677]">เวอร์ชันแอป</span>
+        <span class="text-sm font-medium text-[#4A4A4A]">v1.0.1</span>
+      </div>
+      
+      <div class="flex justify-between items-center py-2 border-b border-gray-50">
+        <span class="text-sm text-[#666677]">โมเดล AI</span>
+        <span class="text-sm font-medium text-[#A78BFA]">Gemini Flash Lite</span>
+      </div>
+
+      <div class="pt-4">
+        <button onclick="clearHistory()" class="w-full py-3.5 bg-red-50 hover:bg-red-100 border border-red-100 rounded-2xl text-red-500 font-semibold text-sm transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          ล้างประวัติการสแกนทั้งหมด
+        </button>
+        <p class="text-[11px] text-center text-[#a0a0b0] mt-3">ข้อมูลการสแกนทั้งหมดจะถูกลบออกจากเครื่องนี้อย่างถาวร</p>
       </div>
     </div>
   </div>
@@ -433,11 +444,6 @@ window.submitLevel3 = async () => {
   await callGeminiAPI(3, data);
 };
 
-window.saveApiKey = () => {
-  const key = document.getElementById('api-key-input').value;
-  localStorage.setItem('meloflow_api_key', key);
-  alert('บันทึก API Key เรียบร้อยแล้วครับ!');
-};
 
 function calculateEnergyLevel(data) {
   const map = {
@@ -473,12 +479,12 @@ const getSystemPrompt = () => `คุณคือ Mello ผู้ช่วยส
 ตอบกลับด้วยข้อความที่สั้น กระชับ เป็นกันเอง (ใช้ภาษาไทย) ไม่เกิน 4-5 ประโยค และเชื่อมโยงกับการยกระดับ "ความถี่พลังงาน (Frequency)" ที่ได้รับมาให้สูงขึ้นด้วยครับ`;
 
 async function callGeminiAPI(level, data) {
-  // ดึง API Key จาก Environment Variable (.env.local หรือ Vercel), ถ้าไม่มีให้ดึงจาก LocalStorage
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY || localStorage.getItem('meloflow_api_key');
+  // ดึง API Key จาก Environment Variable (.env.local หรือ Vercel)
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
   if (!apiKey) {
-    alert("กรุณาตั้งค่า Gemini API Key ในโค้ดหรือในเมนู 'ตั้งค่า' (Profile) ก่อนใช้งานครับ");
-    navigate('settings');
+    alert("ไม่พบ API Key กรุณาตั้งค่า VITE_GEMINI_API_KEY ในไฟล์ .env.local ครับ");
+    navigate('home');
     return;
   }
 
