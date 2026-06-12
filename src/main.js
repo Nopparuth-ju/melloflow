@@ -229,8 +229,13 @@ appDiv.innerHTML = `
       <h1 class="text-2xl font-semibold text-[#333333] mb-2">ข้อคิดสำหรับคุณ 🌿</h1>
     </div>
     
-    <div class="bg-white rounded-[32px] p-6 shadow-[0_8px_24px_rgba(0,0,0,0.05)] border-2 border-white/50 mb-4 text-center">
-      <h4 class="text-sm font-semibold text-[#666677] mb-4">Current Energy Frequency</h4>
+    <div class="bg-white rounded-[32px] p-6 shadow-[0_8px_24px_rgba(0,0,0,0.05)] border-2 border-white/50 mb-4 text-center relative">
+      <h4 class="text-sm font-semibold text-[#666677] mb-4 flex items-center justify-center gap-2">
+        Current Energy Frequency
+        <button onclick="openFrequencyMap()" class="w-5 h-5 rounded-full bg-[#FDFBF7] flex items-center justify-center text-[#a0a0b0] hover:text-[#4A4A4A] transition-colors border border-gray-100 shadow-sm">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        </button>
+      </h4>
       
       <div class="flex justify-center mb-3">
         <svg id="energy-avatar" width="120" height="120" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="transition-all duration-700">
@@ -527,6 +532,34 @@ async function callGeminiAPI(level, data) {
     navigate(`level${level}`);
   }
 }
+
+// Global functions for Frequency Map Modal
+window.openFrequencyMap = () => {
+  const modal = document.getElementById('frequency-modal');
+  const content = modal.querySelector('div');
+  modal.classList.remove('hidden');
+  // Small delay to allow display:block to apply before animating opacity/transform
+  setTimeout(() => {
+    modal.classList.remove('opacity-0');
+    modal.classList.add('opacity-100');
+    content.classList.remove('scale-95');
+    content.classList.add('scale-100');
+  }, 10);
+};
+
+window.closeFrequencyMap = () => {
+  const modal = document.getElementById('frequency-modal');
+  const content = modal.querySelector('div');
+  modal.classList.remove('opacity-100');
+  modal.classList.add('opacity-0');
+  content.classList.remove('scale-100');
+  content.classList.add('scale-95');
+  setTimeout(() => {
+    modal.classList.add('hidden');
+  }, 300); // Wait for transition
+};
+
+document.addEventListener('DOMContentLoaded', initApp);
 
 // History Render
 window.renderHistory = () => {
