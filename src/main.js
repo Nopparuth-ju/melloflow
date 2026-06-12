@@ -492,7 +492,10 @@ async function callGeminiAPI(level, data) {
       })
     });
 
-    if (!response.ok) throw new Error("API Error: " + response.statusText);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`API Error: ${response.status} - ${errorText}`);
+    }
     const result = await response.json();
     const reply = result.candidates[0].content.parts[0].text;
 
@@ -519,8 +522,8 @@ async function callGeminiAPI(level, data) {
 
     navigate('result');
   } catch (error) {
-    console.error(error);
-    alert("ขออภัย เกิดข้อผิดพลาดในการประมวลผล (กรุณาเช็ค API Key หรือการเชื่อมต่ออินเทอร์เน็ต)");
+    console.error("Gemini Fetch Error:", error);
+    alert("เกิดข้อผิดพลาดจากเซิร์ฟเวอร์ Gemini:\n\n" + error.message);
     navigate(`level${level}`);
   }
 }
