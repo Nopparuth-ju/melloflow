@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0a0a1a" />
+    <title>Melloflow</title>
+    <!-- Add FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font (Kanit) -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-[#FDFBF7] text-[#4A4A4A] font-sans antialiased min-h-screen relative flex justify-center overflow-x-hidden">
+    <!-- Background Aurora Effect -->
+    <div class="aurora-bg fixed top-0 left-0 w-screen h-screen -z-10 overflow-hidden bg-[#FDFBF7]">
+      <div class="aurora-blob blob-1 absolute rounded-[50%_40%_60%_40%/40%_50%_60%_50%] opacity-80 w-[350px] h-[350px] bg-[#FFD8C9] -top-[10%] -left-[20%]"></div>
+      <div class="aurora-blob blob-2 absolute rounded-[50%_40%_60%_40%/40%_50%_60%_50%] opacity-80 w-[450px] h-[450px] bg-[#E5D4FF] -bottom-[15%] -right-[20%]"></div>
+      <div class="aurora-blob blob-3 absolute rounded-[40%_60%_40%_60%/60%_40%_50%_40%] opacity-80 w-[300px] h-[300px] bg-[#C9F2E9] top-[40%] left-[60%]"></div>
+    </div>
+
+    <div id="app" class="w-full max-w-md min-h-screen px-6 pt-6 pb-28 relative flex flex-col">
+      <!-- Main Content Container injected via JS -->
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white rounded-t-[30px] flex justify-around pt-5 pb-8 px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-[100]">
+      <div class="nav-item active flex flex-col items-center justify-center text-[#a0a0b0] transition-all duration-300 cursor-pointer" onclick="navigate('home')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      </div>
+      <div class="nav-item flex flex-col items-center justify-center text-[#a0a0b0] transition-all duration-300 cursor-pointer" onclick="navigate('explore')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+      </div>
+      <div class="nav-item flex flex-col items-center justify-center text-[#a0a0b0] transition-all duration-300 cursor-pointer" onclick="navigate('notifications')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+      </div>
+      <div class="nav-item flex flex-col items-center justify-center text-[#a0a0b0] transition-all duration-300 cursor-pointer" onclick="navigate('profile')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      </div>
+    </nav>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
