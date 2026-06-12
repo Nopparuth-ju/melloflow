@@ -24,5 +24,11 @@
 - ต้องมีไฟล์ `.env` ที่ใส่ค่า `GEMINI_API_KEY=...` ไว้ด้วยเสมอ
 
 ## Current Status (12 June 2026)
-- ปรับเปลี่ยน Design จาก Dark Mode (Aurora) เป็น **Light Pastel Theme**
-- ก็อปปี้โฟลเดอร์จาก `07_` เป็น `Melloflow` เรียบร้อยแล้ว
+- **สถาปัตยกรรม (Architecture):** ปรับการเรียก AI กลับมาเป็นการยิง API ตรงๆ (Direct Fetch) จากฝั่ง Frontend (`main.js`) แทน Vercel Functions เพื่อเลี่ยงปัญหา Quota และย้ายการเก็บ API Key ไปไว้ใน `.env.local` (`VITE_GEMINI_API_KEY`) อย่างปลอดภัย
+- **อัปเดตโมเดล AI:** เปลี่ยนไปใช้ `gemini-flash-lite-latest` หรือรุ่นที่ใช้งานได้ฟรีและเร็วเพื่อป้องกันข้อผิดพลาด Quota Limit = 0
+- **เพิ่มฟีเจอร์ Map of Consciousness:** เพิ่มปุ่มและหน้าต่าง Modal เด้งขึ้นมาเพื่อแสดงระดับความถี่พลังงานตามทฤษฎีของ David R. Hawkins
+- **UX/UI Revamp:** 
+  - ลบเมนู 'การแจ้งเตือน' (Notifications) ที่ไม่ได้ใช้ออก
+  - ปรับปรุงหน้า 'ตั้งค่า' (Settings) ให้เป็นหน้า 'โปรไฟล์' (Profile) โชว์เวอร์ชันแอป
+  - นำช่องกรอก API Key แบบแมนนวลออก (เน้นตั้งค่าผ่าน `.env.local` แทน)
+  - จัดระเบียบปุ่มต่างๆ ให้เคลียร์และใหญ่ขึ้น
