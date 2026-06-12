@@ -483,7 +483,7 @@ async function callGeminiAPI(level, data) {
 
     const promptText = `ผู้ใช้กำลังบันทึกสภาวะจิตใจ Level ${level}\nข้อมูลที่บันทึก: ${JSON.stringify(data)}\nพลังงานความถี่ปัจจุบัน (David Hawkins Scale): ${energyInfo.freq} Hz (${energyInfo.name})\nโปรดให้คำแนะนำตามกฎ System Logic ที่ตั้งไว้`;
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
