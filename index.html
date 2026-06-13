@@ -271,6 +271,36 @@
       </div>
     </div>
 
+    <!-- QuickSet Level Selection Modal -->
+    <div id="quickset-modal" class="fixed inset-0 bg-white/60 backdrop-blur-sm z-50 hidden flex-col items-center justify-end sm:justify-center p-4 pb-0 sm:pb-4 opacity-0 transition-opacity duration-300" onclick="closeQuicksetModal()">
+      <div class="glass-card bg-white/95 w-full max-w-sm p-6 rounded-t-[32px] sm:rounded-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.08)] sm:shadow-[0_10px_40px_rgba(0,0,0,0.08)] transform translate-y-full sm:scale-95 transition-all duration-300 relative" onclick="event.stopPropagation()">
+        <div class="w-12 h-1.5 bg-[#E8E0D8] rounded-full mx-auto mb-5 sm:hidden"></div>
+        <h3 class="text-xl font-bold text-[#3D3D4F] mb-2 text-center">เลือกการสำรวจ</h3>
+        <p class="text-sm text-[#888899] mb-6 text-center">คุณต้องการสร้างชุดบันทึกด่วนสำหรับระดับไหน?</p>
+        
+        <div class="space-y-3">
+          <button onclick="navigate('level1'); closeQuicksetModal()" class="w-full p-4 rounded-2xl bg-[#F8F5F0] border border-[#E8E0D8] text-[#3D3D4F] font-semibold flex items-center justify-between hover:bg-white hover:shadow-md transition-all">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🙂</span> <span>สำรวจอารมณ์ (Level 1)</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-[#b0b0c0] text-sm"></i>
+          </button>
+          <button onclick="navigate('level2'); closeQuicksetModal()" class="w-full p-4 rounded-2xl bg-[#F8F5F0] border border-[#E8E0D8] text-[#3D3D4F] font-semibold flex items-center justify-between hover:bg-white hover:shadow-md transition-all">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🧘</span> <span>สแกนกาย-ใจ (Level 2)</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-[#b0b0c0] text-sm"></i>
+          </button>
+          <button onclick="navigate('level3'); closeQuicksetModal()" class="w-full p-4 rounded-2xl bg-[#FDF8F4] border border-[#F4A578]/40 text-[#3D3D4F] font-semibold flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">✨</span> <span>จับแยกขันธ์ 5 (Level 3)</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-[#F4A578] text-sm"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

@@ -406,6 +406,11 @@ appDiv.innerHTML = `
       <textarea id="l1-note" class="w-full bg-[#FAF7F3] border-none rounded-2xl p-4 text-[#3D3D4F] font-sans text-sm resize-none min-h-[80px] focus:outline-none focus:ring-2 focus:ring-[#F4A578]/30 transition-all duration-200 placeholder:text-[#c8c0b8]" placeholder="ไม่บังคับ — เล่าให้ฟังสั้นๆ ก็ได้นะ"></textarea>
     </div>
 
+    <!-- Save as Quick Set Action -->
+    <button class="w-full py-3 bg-[#F8F5F0] hover:bg-[#E8E0D8] text-[#5B5B6E] font-semibold text-sm rounded-xl transition-all flex items-center justify-center gap-2 mb-4 border border-dashed border-[#b0b0c0]" onclick="saveAsQuickSet(1)">
+      <i class="fa-solid fa-download"></i> บันทึกการเลือกนี้เป็นชุดด่วน (Quick Set)
+    </button>
+
     <button class="btn-submit w-full p-[18px] rounded-[20px] text-white text-lg font-semibold font-sans" onclick="submitLevel1()">ส่งให้ Mello ✨</button>
   </div>
 
@@ -439,7 +444,7 @@ appDiv.innerHTML = `
       </div>
       
       <!-- Save as Quick Set Action -->
-      <button class="w-full py-3 bg-[#F8F5F0] hover:bg-[#E8E0D8] text-[#5B5B6E] font-semibold text-sm rounded-xl transition-all flex items-center justify-center gap-2 mb-4 border border-dashed border-[#b0b0c0]" onclick="saveAsQuickSet()">
+      <button class="w-full py-3 bg-[#F8F5F0] hover:bg-[#E8E0D8] text-[#5B5B6E] font-semibold text-sm rounded-xl transition-all flex items-center justify-center gap-2 mb-4 border border-dashed border-[#b0b0c0]" onclick="saveAsQuickSet(2)">
         <i class="fa-solid fa-download"></i> บันทึกการเลือกนี้เป็นชุดด่วน (Quick Set)
       </button>
 
@@ -503,6 +508,12 @@ appDiv.innerHTML = `
           <div class="chip py-2.5 px-5 rounded-full bg-white/80 border border-[#E8E0D8] text-[#888899] text-sm font-medium cursor-pointer shadow-sm" onclick="toggleChip(this, 'l3-vinnana', false)">ใจ (รับรู้ความคิด)</div>
         </div>
       </div>
+      
+      <!-- Save as Quick Set Action -->
+      <button class="w-full py-3 bg-[#F8F5F0] hover:bg-[#E8E0D8] text-[#5B5B6E] font-semibold text-sm rounded-xl transition-all flex items-center justify-center gap-2 mb-4 border border-dashed border-[#b0b0c0]" onclick="saveAsQuickSet(3)">
+        <i class="fa-solid fa-download"></i> บันทึกการเลือกนี้เป็นชุดด่วน (Quick Set)
+      </button>
+
       <button class="btn-submit w-full p-[18px] rounded-[20px] text-white text-lg font-semibold font-sans mt-2" onclick="submitLevel3()">ส่งให้ Mello ✨</button>
     </div>
   </div>
@@ -1831,6 +1842,31 @@ window.closeKhandhaKnowledge = () => {
   }, 300);
 };
 
+// Quickset Modal logic
+window.openQuicksetModal = () => {
+  const modal = document.getElementById('quickset-modal');
+  const content = modal.querySelector('div');
+  modal.classList.remove('hidden');
+  setTimeout(() => {
+    modal.classList.remove('opacity-0');
+    modal.classList.add('opacity-100');
+    content.classList.remove('translate-y-full', 'sm:scale-95');
+    content.classList.add('translate-y-0', 'sm:scale-100');
+  }, 10);
+};
+
+window.closeQuicksetModal = () => {
+  const modal = document.getElementById('quickset-modal');
+  const content = modal.querySelector('div');
+  modal.classList.remove('opacity-100');
+  modal.classList.add('opacity-0');
+  content.classList.remove('translate-y-0', 'sm:scale-100');
+  content.classList.add('translate-y-full', 'sm:scale-95');
+  setTimeout(() => {
+    modal.classList.add('hidden');
+  }, 300);
+};
+
 // Quick Sets Logic
 window.renderQuickSets = () => {
   const container = document.getElementById('quick-sets-container');
@@ -1843,7 +1879,7 @@ window.renderQuickSets = () => {
     </button>`;
   });
   
-  html += `<button onclick="navigate('level2')" class="px-4 py-2 bg-[#F8F5F0] border border-dashed border-[#b0b0c0] rounded-full text-sm font-semibold text-[#888899] hover:bg-[#E8E0D8] transition-all flex items-center gap-2">
+  html += `<button onclick="openQuicksetModal()" class="px-4 py-2 bg-[#F8F5F0] border border-dashed border-[#b0b0c0] rounded-full text-sm font-semibold text-[#888899] hover:bg-[#E8E0D8] transition-all flex items-center gap-2">
     <i class="fa-solid fa-plus"></i> เพิ่มด่วน
   </button>`;
   
@@ -1854,47 +1890,121 @@ window.triggerQuickSet = (setId) => {
   const set = window.appState.quickSets.find(s => s.id === setId);
   if (!set) return;
   
+  const targetLevel = set.targetLevel || 2; // Default to 2 for old quicksets
+  
   // Navigate first to make sure DOM is active
-  navigate('level2');
+  navigate(`level${targetLevel}`);
   
   // Brief timeout to let DOM render classes correctly
   setTimeout(() => {
-    // Clear all selections in level2 first
-    document.querySelectorAll('#view-level2 .chip').forEach(el => {
-      el.classList.remove('selected', 'bg-[#3D3D4F]', 'text-white', 'border-[#3D3D4F]', 'shadow-md', 'scale-105', 'shadow-[0_4px_16px_rgba(0,0,0,0.1)]');
-      el.classList.add('bg-white/80', 'text-[#888899]', 'border-[#E8E0D8]');
-      el.style.borderColor = '';
-    });
-    
-    // Apply selections
-    const applySelections = (category, dataArr) => {
-      if (!dataArr) return;
-      const chips = document.querySelectorAll(`#${category} .chip`);
-      chips.forEach(chip => {
-        // Find exact text match
-        const match = dataArr.some(d => chip.innerText.trim() === d.trim());
-        if (match) {
-          window.toggleChip(chip, category, category === 'l2-feeling');
-        }
+    if (targetLevel === 1) {
+      // Level 1 logic
+      if (set.data.mood) {
+        document.querySelectorAll('#l1-moods .glass-card').forEach(card => {
+          if (card.querySelector('span:last-child').innerText.trim() === set.data.mood) {
+            window.selectMood(set.data.mood, card);
+          }
+        });
+      }
+      if (set.data.intensity) {
+        const slider = document.getElementById('l1-intensity');
+        slider.value = set.data.intensity;
+        // Trigger input event to update emoji
+        slider.dispatchEvent(new Event('input'));
+      }
+      if (set.data.note) {
+        document.getElementById('l1-note').value = set.data.note;
+      }
+    } else if (targetLevel === 2) {
+      // Level 2 logic
+      document.querySelectorAll('#view-level2 .chip').forEach(el => {
+        el.classList.remove('selected', 'bg-[#3D3D4F]', 'text-white', 'border-[#3D3D4F]', 'shadow-md', 'scale-105', 'shadow-[0_4px_16px_rgba(0,0,0,0.1)]');
+        el.classList.add('bg-white/80', 'text-[#888899]', 'border-[#E8E0D8]');
+        el.style.borderColor = '';
       });
-    };
-    
-    applySelections('l2-body', set.data.body);
-    applySelections('l2-feeling', set.data.feeling);
-    applySelections('l2-thoughts', set.data.thoughts);
+      
+      const applySelections = (category, dataArr) => {
+        if (!dataArr) return;
+        const chips = document.querySelectorAll(`#${category} .chip`);
+        chips.forEach(chip => {
+          const match = dataArr.some(d => chip.innerText.trim() === d.trim());
+          if (match) {
+            window.toggleChip(chip, category, category === 'l2-feeling');
+          }
+        });
+      };
+      
+      applySelections('l2-body', set.data.body);
+      applySelections('l2-feeling', set.data.feeling);
+      applySelections('l2-thoughts', set.data.thoughts);
+    } else if (targetLevel === 3) {
+      // Level 3 logic
+      document.querySelectorAll('#view-level3 .chip').forEach(el => {
+        el.classList.remove('selected', 'bg-[#3D3D4F]', 'text-white', 'border-[#3D3D4F]', 'shadow-md', 'scale-105', 'shadow-[0_4px_16px_rgba(0,0,0,0.1)]');
+        el.classList.add('bg-white/80', 'text-[#888899]', 'border-[#E8E0D8]');
+        el.style.borderColor = '';
+      });
+      
+      if (set.data.rupa) document.getElementById('l3-rupa').value = set.data.rupa;
+      if (set.data.vedana) document.getElementById('l3-vedana').value = set.data.vedana;
+      if (set.data.sanna) document.getElementById('l3-sanna').value = set.data.sanna;
+      
+      const applySelections = (category, dataArr) => {
+        if (!dataArr) return;
+        const chips = document.querySelectorAll(`#${category} .chip`);
+        chips.forEach(chip => {
+          const match = dataArr.some(d => chip.innerText.trim() === d.trim());
+          if (match) {
+            window.toggleChip(chip, category, category === 'l3-vinnana');
+          }
+        });
+      };
+      
+      applySelections('l3-sankhara', set.data.sankhara);
+      applySelections('l3-vinnana', set.data.vinnana);
+    }
   }, 50);
 };
 
-window.saveAsQuickSet = async () => {
-  const getSelected = (id) => Array.from(document.querySelectorAll(`#${id} .selected`)).map(c => c.innerText.trim());
+window.saveAsQuickSet = async (level = 2) => {
+  let data = {};
   
-  const body = getSelected('l2-body');
-  const feeling = getSelected('l2-feeling');
-  const thoughts = getSelected('l2-thoughts');
-  
-  if (body.length === 0 && feeling.length === 0 && thoughts.length === 0) {
-    alert('กรุณาเลือกอาการอย่างน้อย 1 อย่างก่อนบันทึกชุดด่วนครับ');
-    return;
+  if (level === 1) {
+    const selectedMoodCard = document.querySelector('#l1-moods .glass-card.border-\\[\\#3D3D4F\\]');
+    const mood = selectedMoodCard ? selectedMoodCard.querySelector('span:last-child').innerText.trim() : null;
+    const intensity = document.getElementById('l1-intensity').value;
+    const note = document.getElementById('l1-note').value;
+    
+    if (!mood) {
+      alert('กรุณาเลือกอารมณ์อย่างน้อย 1 อย่างก่อนบันทึกชุดด่วนครับ');
+      return;
+    }
+    data = { mood, intensity, note };
+  } else if (level === 2) {
+    const getSelected = (id) => Array.from(document.querySelectorAll(`#${id} .selected`)).map(c => c.innerText.trim());
+    const body = getSelected('l2-body');
+    const feeling = getSelected('l2-feeling');
+    const thoughts = getSelected('l2-thoughts');
+    
+    if (body.length === 0 && feeling.length === 0 && thoughts.length === 0) {
+      alert('กรุณาเลือกอาการอย่างน้อย 1 อย่างก่อนบันทึกชุดด่วนครับ');
+      return;
+    }
+    data = { body, feeling, thoughts };
+  } else if (level === 3) {
+    const rupa = document.getElementById('l3-rupa').value;
+    const vedana = document.getElementById('l3-vedana').value;
+    const sanna = document.getElementById('l3-sanna').value;
+    
+    const getSelected = (id) => Array.from(document.querySelectorAll(`#${id} .selected`)).map(c => c.innerText.trim());
+    const sankhara = getSelected('l3-sankhara');
+    const vinnana = getSelected('l3-vinnana');
+    
+    if (sankhara.length === 0 && vinnana.length === 0) {
+      alert('กรุณาเลือกองค์ประกอบบางส่วน (เช่น สังขาร หรือ วิญญาณ) ก่อนบันทึกชุดด่วนครับ');
+      return;
+    }
+    data = { rupa, vedana, sanna, sankhara, vinnana };
   }
   
   const name = prompt('ตั้งชื่อชุดบันทึกด่วนนี้ (เช่น "หลังอาหารเที่ยง", "ก่อนนอน"):');
@@ -1903,7 +2013,8 @@ window.saveAsQuickSet = async () => {
   const newSet = {
     id: 'qs_' + Date.now(),
     name: name.trim(),
-    data: { body, feeling, thoughts }
+    targetLevel: level,
+    data: data
   };
   
   window.appState.quickSets.push(newSet);
