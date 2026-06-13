@@ -4,8 +4,8 @@
   "description": "แอปช่วยสำรวจจิตใจ (แยกขันธ์ 5)",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a1a",
-  "theme_color": "#0a0a1a",
+  "background_color": "#FDF8F4",
+  "theme_color": "#FDF8F4",
   "icons": [
     {
       "src": "/icon.svg",
